@@ -3,6 +3,8 @@ import base64
 import hashlib
 import urllib.request
 import os
+import json
+from base64 import b64encode
 from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
 
@@ -86,19 +88,21 @@ result = r.text
 
 # Opdracht 6
 
-data = "Geheim bericht bestemd voor de docenten IoT aan de KdG"
-
-key = get_random_bytes(32)  # Creating a 256 bit key (32 * 8 = 256)
-print(key)
-cipher = AES.new(key, AES.MODE_EAX)
-ciphertext, tag = cipher.encrypt_and_digest(data)
-
-file_out = open("encrypted.bin", "wb")
-[file_out.write(x) for x in (cipher.nonce, tag, ciphertext)]
-file_out.close()
-
-r = requests.post('http://185.115.217.205:1234/opdracht6', json={"bericht_versleuteld": "...",
-                                                                 "sleutel": "...",
-                                                                 "nonce": "..."})
 result = r.text
 # print(result)
+
+
+data = b"Geheim bericht bestemd voor de docenten IoT aan de KdG"
+print(data)
+key = get_random_bytes(32)  # Creating a 256 bit key (32 * 8 = 256)
+print(key.hex())
+cipher = AES.new(key, AES.MODE_EAX)
+ciphertext, tag = cipher.encrypt_and_digest(data)
+print(ciphertext.hex())
+print(cipher.nonce.hex())
+
+r = requests.post('http://185.115.217.205:1234/opdracht7', json={"bericht_versleuteld": ciphertext.hex(),
+                                                                 "sleutel": key.hex(),
+                                                                 "nonce": cipher.nonce.hex()})
+result = r.text
+print(result)
