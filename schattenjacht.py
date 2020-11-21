@@ -6,7 +6,7 @@ import os
 from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
 
-url = 'http://185.115.217.205:1234'
+url = 'http://192.168.1.21:8000'
 
 # Getting first task.
 
